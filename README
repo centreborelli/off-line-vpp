@@ -1,0 +1,261 @@
+PROCESSING PIPELINE
+===================
+
+This a video processing pipeline with the objective of enhancing the quality of a video. 
+The pipeline has the following steps:
+
+1/ Noise preprocessing
+	- impulse noise removal
+	- fixed pattern noise
+	- column/row noise removal
+
+2/ Stabilization
+
+3/ Optical flow computation
+	- TVL1 optical flow
+	- occlusion detection
+
+4/ Denoising with on of the following algorithms:
+	- VBM3D
+	- Recursive bilateral filter
+	- Patch Kalman filter
+
+5/ Video deblurring
+
+6/ Tone-mapping
+
+
+
+ORGANIZATION
+============
+
+We use the folder structure below to exchange data through the pipeline. 
+Some minimal rules:
+
+	* input_data is read-only, and is not in the git repo
+	* output_data contains temporary files of the pipeline
+	* everything is automatized by running shell scripts
+	* a script called "run_all.sh" runs the full pipeline on a sequence
+	* names of intermediate script are numbered and their names are verbs
+	* there is a main intermediate script for each step:
+			- 10_preprocess_noise.sh      # main script for step 1
+			- 20_stabilize_video.sh       # main script for step 2, etc
+			- 30_compute_optical_flow.sh
+			- 40_run_denoising.sh
+			- 50_run_deblurring.sh
+
+	  helper scripts can be called from the main scripts at each step:
+			- 11_remove_impulse_noise.sh
+			- 32_compute_tvl1_flow.sh
+			- 34_compute_occlusion_masks.sh
+
+	* src/ contains the source code. There is a folder for each step
+
+
+Folder structure
+----------------
+
+vpp
+├── input_data                # read only; not in repo
+│   ├── b2_vol21_passe6
+│   ├── b3_vol21_passe6
+│   ...
+├── output_data               # read/write; created by pipeline execution
+│   ├── 1_preprocessing       # outputs of step 1
+│   │   ├── b2_vol21_passe6
+│   │   ├── b3_vol21_passe6
+│   │   ...
+│   ├── 2_stabilization       # outputs of step 2
+│   │   ├── b2_vol21_passe6
+│   │   ├── b3_vol21_passe6
+│   │   ...
+│   ├── 3_oflow
+│   │   ├── b2_vol21_passe6
+│   │   ├── b3_vol21_passe6
+│   │   ...
+│   ├── 4_denoising           # for each sequence, there might be
+│   │   ├── b2_vol21_passe6   # several denoising results
+│   │   │   ├── kalman
+│   │   │   ├── vbm3d
+│   │   │   ...
+│   │   ├── b3_vol21_passe6
+│   │   │   ├── kalman
+│   │   │   ├── vbm3d
+│   │   │   ...
+│   │   ...
+│   ├── 5_deblurring          # deblurring can be skipped
+│   │   ├── flou_IR_1         # the deblurring can be computed for each
+│   │   │   ├── kalman        # denoising result
+│   │   │   ├── vbm3d
+│   │   │   ...
+│   │   ├── flou_IR_1
+│   │   │   ├── kalman
+│   │   │   ├── vbm3d
+│   │   │   ...
+│   │   ...
+│   └── 6_tonemapping         # computed on the denoised or deblurred sequence
+│       ├── b2_vol21_passe6
+│       │   ├── kalman
+│       │   ├── vbm3d
+│       │   ...
+│       ├── b3_vol21_passe6
+│       │   ├── kalman
+│       │   ├── vbm3d
+│       │   ...
+│       ...
+├── src                 # source code
+│   ├── 1_preprocessing
+│   ├── 2_stabilization
+│   ├── 3_oflow
+│   ├── 4_denoising
+│   ├── 5_deblurring
+│   └── utils
+├── 10_preprocess_noise.sh      # main script for step 1
+├── 11_remove_impulse_noise.sh  # helper scripts for step 1
+├── 20_stabilize_video.sh       # main script for step 2, etc
+├── 30_compute_optical_flow.sh  # main script for step 3
+├── 31_...                      # helper scripts for step 3
+├── 32_...
+├── 40_run_denoising.sh
+├── 41_...
+├── 50_run_deblurring.sh
+├── 51_...
+├── 60_run_tonemapping.sh
+└── README                      # this file
+
+
+
+
+SOURCE CODE COMPONENTS
+======================
+
+We provide a brief description of all the components of the code. Each of these
+
+src/utils/imscript
+------------------
+
+A (large) collection of small and stand-alone utilities for image processing.
+For more information see the projects repo: 
+
+https://github.com/mnhrdt/imscript
+
+Only the following utilities are used:
+- blur       - blur an image by convolving with a low-pass filter
+- veco       - compute per-pixel statistics over many images
+- plambda    - compute lambda expressions on image pixels
+- imprintf   - print statistics of images specified using a printf format
+- downsa     - downsample
+- upsa       - upsample 
+- morsi      - morphological operatore
+
+Most of them are required for the noise pre-processing step.
+downsa and upsa are used to downscale and upscale the video.
+plambda is used for several things (from applying a log, to computing the
+divergence of the optical flow). plambda lines can be a bit difficult to 
+read. A detailed description about plamda can be found here:
+
+http://dev.ipol.im/~coco/website/plambda.html
+
+
+src/1_preprocessing/srcmire_2
+-----------------------------
+
+This code can be used to remove the vertical bands.
+In the current version of the pipeline it is NOT used.
+For more information see the corresponding IPOL publication:
+
+http://www.ipol.im/pub/art/2012/glmt-mire/
+
+
+src/1_preprocessing/unband
+-----------------------------
+
+Octave function currently used to remove the vertical and horizontal bands.
+
+
+src/1_preprocessing/ponomarenko
+-------------------------------
+
+This code is used to estimate the standard deviation of the noise.
+For more information see the corresponding IPOL publication:
+
+https://www.ipol.im/pub/art/2013/45/
+
+
+src/1_preprocessing/convicon
+----------------------------
+
+Converter to the image type used by the ponomarenko noise estimation code.
+
+
+src/2_stabilization/estadeo_1.1
+-------------------------------
+
+This code is used to stabilize motion in the video.
+For more information see the corresponding IPOL publication:
+
+http://www.ipol.im/pub/art/2017/209/
+
+
+src/2_stabilization/tvl1flow_3
+------------------------------
+
+This code is used to estimate the motion in the sequence.
+For more information see the corresponding IPOL publication:
+
+http://www.ipol.im/pub/art/2013/26/
+
+The code here is a slightly modified version which receives 
+an additional input argument fscale (finest scale). This 
+parameter allows to specify the finest scale used by the 
+tvl1 algorithm. fscale=0 refers to the original image. 
+fscale=1 computes the flow in the pyramid until scale 1 (half
+of the original resolution for a zoom factor of 0.5). Etc.
+
+
+src/4_denoising/[any-denoiser]
+------------------------------
+
+Denosing methods. Currently we have:
+	- Recursive bilateral filter
+	- VBM3D
+	- Patch Kalman filter
+
+
+BUILDING
+========
+
+The code in src/ is comprised of different independent projects in C/C++. Each
+of them has to be compiled independently (this should change in the future). Some
+work with plain Makefiles, others use cmake (for the moment these are only the 
+denoising codes).
+
+Some codes have an individual README file explaining how to compile it. In this
+case follow the instructions given in the README file. If there's no readme file,
+just type make in the projects folder.
+
+
+# projects compiled with make
+
+$ cd src/utils/imscript; make -j; cd ../../..
+$ cd src/1_preprocessing/convicon; make -j; cd ../../..
+$ cd src/1_preprocessing/srcmire_2; make -j; cd ../../..
+$ cd src/1_preprocessing/ponomarenko; make -j; cd ../../..
+$ cd src/2_stabilization/estadeo_1.1; make -j; cd ../../..
+$ cd src/3_oflow/tvl1flow_3; make -j; cd ../../..
+$ cd src/5_deblurring/fba; make -j; cd ../../..
+
+# projects compiled with cmake
+
+$ cd src/4_denoising/[any-denoisier]
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make -j
+$ cd ../../../..
+
+# these projects require octave (and its compiler mkoctfile)
+
+$ cd src/1_preprocessing/unband; make -j; cd ../../..
+$ cd src/6_tonemapping; make -j; cd ../..
+

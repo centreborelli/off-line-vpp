@@ -1,0 +1,9 @@
+[submodule "src/4_denoising/kalman"]
+	path = src/4_denoising/kalman
+	url = https://github.com/pariasm/bwd-nlkalman.git
+[submodule "src/4_denoising/rbilf"]
+	path = src/4_denoising/rbilf
+	url = https://github.com/pariasm/rbilf.git
+[submodule "src/utils/imscript"]
+	path = src/utils/imscript
+	url = https://github.com/mnhrdt/imscript.git

@@ -1,0 +1,52 @@
+# Input and output data
+input_data
+input_data/*
+output_data
+output_data*/*
+
+# Octave binaries
+*.mex
+
+# Temporary files created by text editors
+.*.swp
+.*.swo
+*~
+
+
+#
+# The remanaining of the file is generated automagically by github
+# for C++ projects.
+#
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
