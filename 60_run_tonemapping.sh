@@ -30,11 +30,13 @@ INPUT_DIR="output_data/$STEP/$SEQUENCE/$ALGO"
 # add bin folder to path
 export PATH=`pwd`/bin/:$PATH
 
+PLAMBDA="src/utils/imscript/bin/plambda"
+
 # read sequence original range
 #echo output_data/1_preprocessing/$SEQUENCE/range.txt
 read -r -a RANGE <<< $(cat output_data/1_preprocessing/$SEQUENCE/range.txt)
-#RFACTOR=$(bin/plambda -c "255 ${RANGE[1]} ${RANGE[0]} - /")
-RFACTOR=$(bin/plambda -c "${RANGE[1]} ${RANGE[0]} - 255 /")
+#RFACTOR=$($PLAMBDA -c "255 ${RANGE[1]} ${RANGE[0]} - /")
+RFACTOR=$($PLAMBDA -c "${RANGE[1]} ${RANGE[0]} - 255 /")
 #echo ${RANGE[0]}
 #echo ${RANGE[1]}
 #echo $RFACTOR

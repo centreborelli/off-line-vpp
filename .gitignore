@@ -4,6 +4,8 @@ input_data/*
 output_data
 output_data*/*
 
+src/5_deblurring/fba/fba
+
 # Octave binaries
 *.mex
 

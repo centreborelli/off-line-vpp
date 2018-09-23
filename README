@@ -57,8 +57,14 @@ Folder structure
 
 vpp
 ├── input_data                # read only; not in repo
-│   ├── b2_vol21_passe6
+│   ├── b2_vol21_passe6 
+│   │   ├── f0000.png         # NOTE: you have to use these filenames!
+│   │   ├── f0001.png
+│   │   ...
 │   ├── b3_vol21_passe6
+│   │   ├── f0000.png
+│   │   ├── f0001.png
+│   │   ...
 │   ...
 ├── output_data               # read/write; created by pipeline execution
 │   ├── 1_preprocessing       # outputs of step 1
@@ -125,9 +131,60 @@ vpp
 
 
 
+USAGE
+=====
 
-SOURCE CODE COMPONENTS
-======================
+To run the pipeline on a sequence, use run_all.sh, from the root directory (vpp).
+
+The script run_all.sh takes 3 mandatory inputs, and 3 optional ones.
+$ ./run_all.sh sequence-name first-frame last-frame [remove-outliers [remove-fpn [deblur]]]
+
+- sequence-name   : name of the directory of the sequence in the input_data folder
+- first-frame     : first frame that you want to process
+- last-frame      : last frame that you want to process
+- remove-outliers : 1 to remove outliers, 0 to skip outlier removal
+- remove-fpn      : 1 to remove fixed pattern noise, 0 to skip fpn removal
+- deblur          : 1 to deblur, 0 to skip deblurring
+
+
+
+Example for processing frames 1 to 100 of b3_vol21_passe6, with outlier
+and fpn removal, but without deblurring:
+
+~ $ cd /path/to/vpp
+vpp $ ./run_all.sh b3_vol21_passe6 1 100 1 1 0
+
+
+The intermediate results are stored as tif images with floating points.
+We map the range or the inputs to the [0,255] range (without quantization),
+because the parameters of most algos in the pipeline are tuned to that range.
+
+For visualizing sequences of images almost any kind (including floating point 
+high dynamic range images) we recommend Jérémy Anger's vpv:
+
+https://github.com/kidanger/vpv
+
+
+
+A note on tone mapping
+----------------------
+
+For the moment, we don't have a robust way of selecting good parameters of the 
+tone mapping algorithm. Running the pipeline with run_all.sh calls the tone 
+mapping with the default parameters, which not allways provide good results.
+
+We recommend, AFTER running the pipeline, calling the tone mapper as shown in 
+the script run_all_tonemappings.sh
+
+
+
+
+
+
+
+
+BUILDING SOURCE CODE COMPONENTS
+===============================
 
 We provide a brief description of all the components of the code. Each of these
 
