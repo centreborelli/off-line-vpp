@@ -5,6 +5,8 @@ SEQUENCE=$1 # sequence folder
 F=${2:-1}   # first frame (optional: default 1)
 L=${3:-0}   # last frame  (optional: default all frames)
 
+STABILIZE=${4:-1} # toggle stabilization on/off
+
 # downsample the sequence after stabilization
 DOWNSAMPLE=0
 
@@ -15,7 +17,12 @@ then
 	exit 1
 fi
 
-echo "Stabilizing sequence $SEQUENCE. Output stored in output_data/2_stabilization/$SEQUENCE/"
+if [ $STABILIZE -eq 1 ]; then
+	echo "Stabilizing sequence $SEQUENCE."
+else
+	echo "Skipping stabilization for sequence $SEQUENCE."
+fi
+echo "Output stored in output_data/2_stabilization/$SEQUENCE/"
 
 STABI="src/2_stabilization/estadeo_1.1/bin/estadeo"
 
@@ -31,7 +38,6 @@ then
 fi
 
 
-STABILIZE=1
 if [ $STABILIZE -eq 1 ];
 then
 	$STABI $INPUT_DIR/%03d.tif $F $L -1 -1 -1 -o $OUTPUT_DIR/%03d.tif
