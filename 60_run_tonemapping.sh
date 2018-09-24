@@ -7,6 +7,8 @@ L=${3}   # last frame  (optional: default all frames)
 STEP=${4:-"4_denoising"} # pipeline step
 ALGO=${5:-""} # algorithm
 RSCALE=${6:-""} # range scale of the detail in the input sequence
+                # - A large scaleFactor will enhance small details
+                # - A small scaleFactor will enhance the base
 
 # number of parallel threads
 NUM_PROCS=30
@@ -39,9 +41,6 @@ read -r -a RANGE <<< $(cat output_data/1_preprocessing/$SEQUENCE/range.txt)
 #RFACTOR=$($PLAMBDA -c "255 ${RANGE[1]} ${RANGE[0]} - /")
 RFACTOR=$($PLAMBDA -c "${RANGE[1]} ${RANGE[0]} - 255 /")
 RFACTOR=$($PLAMBDA -c "$RFACTOR $RSCALE /")
-#echo ${RANGE[0]}
-#echo ${RANGE[1]}
-#echo $RFACTOR
 TM="src/6_tonemapping/tonemapping.m"
 for i in $(seq -f "%03g" $F $L)
 do

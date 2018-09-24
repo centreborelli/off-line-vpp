@@ -30,14 +30,14 @@ FS=1   # finest scale (0 image scale, 1 one coarser level, 2 more coarse, etc...
 # for recursive algorithms.
 # ---------------------------------------------------------------------
 
-# compute forward flow
-for i in `seq $F $((L - 1))`;
-do
-	$TVL1 `printf ${D} $i` `printf ${D} $((i + 1))` \
-		   ${O}/`printf %03d.f.flo $i` \
-		   0 0.25 $DW 0.3 100 $FS 0.5 5 0.01 0; 
-done
-cp ${O}/`printf %03d.f.flo $((L - 1))` ${O}/`printf %03d.f.flo $L`
+## # compute forward flow
+## for i in `seq $F $((L - 1))`;
+## do
+## 	$TVL1 `printf ${D} $i` `printf ${D} $((i + 1))` \
+## 		   ${O}/`printf %03d.f.flo $i` \
+## 		   0 0.25 $DW 0.3 100 $FS 0.5 5 0.01 0; 
+## done
+## cp ${O}/`printf %03d.f.flo $((L - 1))` ${O}/`printf %03d.f.flo $L`
 # ---------------------------------------------------------------------
 # NOTE: Because of lazy programming, the denoising algorithms expect to
 # receive the same number of video frames and optical flows. Of course
