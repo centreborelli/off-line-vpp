@@ -6,6 +6,7 @@ F=${2}   # first frame (optional: default 1)
 L=${3}   # last frame  (optional: default all frames)
 STEP=${4:-"4_denoising"} # pipeline step
 ALGO=${5:-""} # algorithm
+RSCALE=${6:-""} # range scale of the detail in the input sequence
 
 # number of parallel threads
 NUM_PROCS=30
@@ -37,6 +38,7 @@ PLAMBDA="src/utils/imscript/bin/plambda"
 read -r -a RANGE <<< $(cat output_data/1_preprocessing/$SEQUENCE/range.txt)
 #RFACTOR=$($PLAMBDA -c "255 ${RANGE[1]} ${RANGE[0]} - /")
 RFACTOR=$($PLAMBDA -c "${RANGE[1]} ${RANGE[0]} - 255 /")
+RFACTOR=$($PLAMBDA -c "$RFACTOR $RSCALE /")
 #echo ${RANGE[0]}
 #echo ${RANGE[1]}
 #echo $RFACTOR
