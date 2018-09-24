@@ -42,10 +42,17 @@ if [ $DEBLUR -eq 1 ];
 then
 	./50_run_deblurring.sh $SEQUENCE $F $L "kalman"
 	./50_run_deblurring.sh $SEQUENCE $F $L "rbilf"
-	./60_run_tonemapping.sh $SEQUENCE $F $L "5_deblurring" "kalman"
-	./60_run_tonemapping.sh $SEQUENCE $F $L "5_deblurring" "rbilf"
+
+	# NOTE: for the moment we don't have an automatic selection of the
+	#       tonemapping parameters. Instead, we have chosen manually
+	#       a parameter for each sequence. To tonemap the sequences, you
+	#       can 60_run_tonemapping.sh with the parameters given in
+	#       run_all_tonemappings.
+
+#	./60_run_tonemapping.sh $SEQUENCE $F $L "5_deblurring" "kalman"
+#	./60_run_tonemapping.sh $SEQUENCE $F $L "5_deblurring" "rbilf"
 else
-	./60_run_tonemapping.sh $SEQUENCE $F $L "4_denoising" "kalman"
-	./60_run_tonemapping.sh $SEQUENCE $F $L "4_denoising" "rbilf"
+#	./60_run_tonemapping.sh $SEQUENCE $F $L "4_denoising" "kalman"
+#	./60_run_tonemapping.sh $SEQUENCE $F $L "4_denoising" "rbilf"
 fi
 
