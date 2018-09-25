@@ -13,7 +13,6 @@ L=${3:-0} # last frame
 
 SEQUENCE=$1
 INPUT_DIR="output_data/2_stabilization/$SEQUENCE"
-OFLOW_DIR="output_data/3_oflow/$SEQUENCE"
 OUTPUT_DIR="output_data/4_denoising/$SEQUENCE/vbm3d"
 
 echo "Denoising sequence $SEQUENCE. Output stored in $OUTPUT_DIR"
@@ -33,11 +32,11 @@ echo "Output stored $OUTPUT_DIR"
 mkdir -p $OUTPUT_DIR
 
 # nldct binary
-DENO="src/4_denoising/vbm3d/build/bin/VBM3Ddenoising"
+DENO="src/4_denoising/vbm3d/VBM3Ddenoising"
 SIGMA=$(cat "$INPUT_DIR/sigma.txt")
 
 # run denoising (first step)
 $DENO \
--i ${INPUT_DIR}/%03d.tif -f $F -l $L -s $SIGMA \
+-i ${INPUT_DIR}/%03d.tif -f $F -l $L -sigma $SIGMA \
 -add false \
 -deno ${OUTPUT_DIR}/%03d.tif
