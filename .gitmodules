@@ -7,3 +7,6 @@
 [submodule "src/utils/imscript"]
 	path = src/utils/imscript
 	url = https://github.com/mnhrdt/imscript.git
+[submodule "src/4_denoising/vbm3d"]
+	path = src/4_denoising/vbm3d
+	url = https://github.com/tehret/vbm3d
