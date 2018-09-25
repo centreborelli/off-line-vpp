@@ -131,62 +131,8 @@ vpp
 
 
 
-USAGE
-=====
-
-To run the pipeline on a sequence, use run_all.sh, from the root directory (vpp).
-
-The script run_all.sh takes 3 mandatory inputs, and 3 optional ones.
-$ ./run_all.sh sequence first-frame last-frame \
-		[remove-outliers [remove-fpn [stabilize [deblur]]]]
-
-- sequence        : name of the directory of the sequence in the input_data folder
-- first-frame     : first frame that you want to process
-- last-frame      : last frame that you want to process
-- remove-outliers : 1 to remove outliers, 0 to skip outlier removal
-- remove-fpn      : 1 to remove fixed pattern noise, 0 to skip fpn removal
-- stabilize       : 1 to stabilize, 0 to skip stabilization
-- deblur          : 1 to deblur, 0 to skip deblurring
-
-
-
-Example for processing frames 1 to 100 of b3_vol21_passe6, with outlier
-and fpn removal, but without deblurring:
-
-~ $ cd /path/to/vpp
-vpp $ ./run_all.sh b3_vol21_passe6 1 100 1 1 1 0
-
-
-The intermediate results are stored as tif images with floating points.
-We map the range or the inputs to the [0,255] range (without quantization),
-because the parameters of most algos in the pipeline are tuned to that range.
-
-For visualizing sequences of images almost any kind (including floating point 
-high dynamic range images) we recommend Jérémy Anger's vpv:
-
-https://github.com/kidanger/vpv
-
-
-
-A note on tone mapping
-----------------------
-
-For the moment, we don't have a robust way of selecting good parameters of the 
-tone mapping algorithm. Running the pipeline with run_all.sh calls the tone 
-mapping with the default parameters, which not allways provide good results.
-
-We recommend, AFTER running the pipeline, calling the tone mapper as shown in 
-the script run_all_tonemappings.sh
-
-
-
-
-
-
-
-
-BUILDING SOURCE CODE COMPONENTS
-===============================
+SOURCE CODE COMPONENTS
+======================
 
 We provide a brief description of all the components of the code. Each of these
 
@@ -281,6 +227,7 @@ Denosing methods. Currently we have:
 	- Patch Kalman filter
 
 
+
 BUILDING
 ========
 
@@ -296,29 +243,82 @@ just type make in the projects folder.
 
 # projects compiled with make
 
-$ cd src/utils/imscript; make -j; cd ../../..
-$ cd src/1_preprocessing/convicon; make -j; cd ../../..
-$ cd src/1_preprocessing/srcmire_2; make -j; cd ../../..
-$ cd src/1_preprocessing/ponomarenko; make -j; cd ../../..
-$ cd src/2_stabilization/estadeo_1.1; make -j; cd ../../..
-$ cd src/3_oflow/tvl1flow_3; make -j; cd ../../..
-$ cd src/5_deblurring/fba; make -j; cd ../../..
+$ cd src/utils/imscript; make; cd ../../..
+$ cd src/1_preprocessing/convicon; make; cd ../../..
+$ cd src/1_preprocessing/srcmire_2; make; cd ../../..
+$ cd src/1_preprocessing/ponomarenko; make; cd ../../..
+$ cd src/2_stabilization/estadeo_1.1; make; cd ../../..
+$ cd src/3_oflow/tvl1flow_3; make; cd ../../..
+$ cd src/4_denoising/vbm3d; make; cd ../../..
+$ cd src/5_deblurring/fba; make; cd ../../..
 
 # projects compiled with cmake
 
-$ cd src/4_denoising/[any-denoisier]
+$ cd src/4_denoising/[kalman or rbilf]
 $ mkdir build
 $ cd build
 $ cmake ..
-$ make -j
+$ make
 $ cd ../../../..
 
 # these projects require octave (and its compiler mkoctfile)
 
-$ cd src/1_preprocessing/unband; make -j; cd ../../..
-$ cd src/6_tonemapping; make -j; cd ../..
+$ cd src/1_preprocessing/unband; make; cd ../../..
+$ cd src/6_tonemapping; make; cd ../..
 
 
 The Makefile in the root directory compiles all projects, except those that
 require cmake.
+
+
+
+USAGE
+=====
+
+To run the pipeline on a sequence, use run_all.sh, from the root directory (vpp).
+
+The script run_all.sh takes 3 mandatory inputs, and 3 optional ones.
+$ ./run_all.sh sequence first-frame last-frame \
+		[remove-outliers [remove-fpn [stabilize [deblur]]]]
+
+- sequence        : name of the directory of the sequence in the input_data folder
+- first-frame     : first frame that you want to process
+- last-frame      : last frame that you want to process
+- remove-outliers : 1 to remove outliers, 0 to skip outlier removal
+- remove-fpn      : 1 to remove fixed pattern noise, 0 to skip fpn removal
+- stabilize       : 1 to stabilize, 0 to skip stabilization
+- deblur          : 1 to deblur, 0 to skip deblurring
+
+
+
+Example for processing frames 1 to 100 of b3_vol21_passe6, with outlier
+and fpn removal, but without deblurring:
+
+~ $ cd /path/to/vpp
+vpp $ ./run_all.sh b3_vol21_passe6 1 100 1 1 1 0
+
+
+The intermediate results are stored as tif images with floating points.
+We map the range or the inputs to the [0,255] range (without quantization),
+because the parameters of most algos in the pipeline are tuned to that range.
+
+For visualizing sequences of images almost any kind (including floating point 
+high dynamic range images) we recommend Jérémy Anger's vpv:
+
+https://github.com/kidanger/vpv
+
+
+
+A note on tone mapping
+----------------------
+
+For the moment, we don't have a robust way of selecting good parameters of the 
+tone mapping algorithm. Running the pipeline with run_all.sh calls the tone 
+mapping with the default parameters, which not allways provide good results.
+
+We recommend, AFTER running the pipeline, calling the tone mapper as shown in 
+the script run_all_tonemappings.sh
+
+
+
 
