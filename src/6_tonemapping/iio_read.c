@@ -10,7 +10,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	if (nlhs != nrhs)
 		return;
 
-	for (int i = 0; i < nrhs; i++)
+	int i, j, k;
+	for (i = 0; i < nrhs; i++)
 	{
 		char *f = mxArrayToString(prhs[i]);
 		int w, h, d;
@@ -20,9 +21,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		mwSize S[3] = {h, w, d};
 		plhs[i] = mxCreateNumericArray(3, S, mxDOUBLE_CLASS, mxREAL);
 		double *X = mxGetPr(plhs[i]);
-		for (int j = 0; j < h; j++)
-		for (int i = 0; i < w; i++)
-		for (int k = 0; k < d; k++)
+		for (j = 0; j < h; j++)
+		for (i = 0; i < w; i++)
+		for (k = 0; k < d; k++)
 			X[w*h*k + (i*h+j)] = x[(j*w+i)*d + k];
 		iio_free(x);
 	}

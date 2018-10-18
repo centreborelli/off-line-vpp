@@ -20,15 +20,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 	char *f = mxArrayToString(prhs[0]);
 
+	int i,j,k;
+
 	switch(mxGetClassID(prhs[1]))
 	{
 		case mxDOUBLE_CLASS:
 		{
 			double *X = mxGetPr(prhs[1]);
 			double *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = X[w*h*k + (i*h+j)];
 			iio_write_image_double_vec(f, x, w, h, d);
 			free(x);
@@ -39,9 +41,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			float *X = (float*) mxGetPr(prhs[1]);
 			float *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = X[w*h*k + (i*h+j)];
 			iio_write_image_float_vec(f, x, w, h, d);
 			free(x);
@@ -52,9 +54,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			int8_t *X = (int8_t*) mxGetPr(prhs[1]);
 			int *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = (int)X[w*h*k + (i*h+j)];
 			iio_write_image_int_vec(f, x, w, h, d);
 			free(x);
@@ -65,9 +67,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			int16_t *X = (int16_t*) mxGetPr(prhs[1]);
 			int *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = (int)X[w*h*k + (i*h+j)];
 			iio_write_image_int_vec(f, x, w, h, d);
 			free(x);
@@ -78,9 +80,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			int32_t *X = (int32_t*) mxGetPr(prhs[1]);
 			int *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = (int)X[w*h*k + (i*h+j)];
 			iio_write_image_int_vec(f, x, w, h, d);
 			free(x);
@@ -91,9 +93,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			uint8_t *X = (uint8_t*) mxGetPr(prhs[1]);
 			uint8_t *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = X[w*h*k + (i*h+j)];
 			iio_write_image_uint8_vec(f, x, w, h, d);
 			free(x);
@@ -104,9 +106,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		{
 			uint16_t *X = (uint16_t*) mxGetPr(prhs[1]);
 			uint16_t *x = malloc(w*h*d*sizeof*x);
-			for (int j = 0; j < h; j++)
-			for (int i = 0; i < w; i++)
-			for (int k = 0; k < d; k++)
+			for (j = 0; j < h; j++)
+			for (i = 0; i < w; i++)
+			for (k = 0; k < d; k++)
 				x[(j*w+i)*d + k] = X[w*h*k + (i*h+j)];
 			iio_write_image_uint16_vec(f, x, w, h, d);
 			free(x);
