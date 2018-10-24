@@ -187,12 +187,6 @@ For more information see the corresponding IPOL publication:
 https://www.ipol.im/pub/art/2013/45/
 
 
-src/1_preprocessing/convicon
-----------------------------
-
-Converter to the image type used by the ponomarenko noise estimation code.
-
-
 src/2_stabilization/estadeo_1.1
 -------------------------------
 
@@ -244,7 +238,6 @@ just type make in the projects folder.
 # projects compiled with make
 
 $ cd src/utils/imscript; make; cd ../../..
-$ cd src/1_preprocessing/convicon; make; cd ../../..
 $ cd src/1_preprocessing/srcmire_2; make; cd ../../..
 $ cd src/1_preprocessing/ponomarenko; make; cd ../../..
 $ cd src/2_stabilization/estadeo_1.1; make; cd ../../..

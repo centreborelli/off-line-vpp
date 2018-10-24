@@ -1,7 +1,6 @@
 
 all:
 	${MAKE} -C src/utils/imscript
-	${MAKE} -C src/1_preprocessing/convicon
 	${MAKE} -C src/1_preprocessing/srcmire_2
 	${MAKE} -C src/1_preprocessing/ponomarenko
 	${MAKE} -C src/2_stabilization/estadeo_1.1
