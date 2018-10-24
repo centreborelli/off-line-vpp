@@ -25,21 +25,16 @@ then
 fi
 
 PONO=src/1_preprocessing/ponomarenko/ponomarenko
-CONVICON=src/1_preprocessing/convicon/bin/convicon
 
 # step (only run ponomarenko in 1/S of the frames)
 S=10
 
 for i in $(seq -f "%03g" $F $S $L)
 do
-	# convert from tif to RGB
-	$CONVICON -i $INPUT_DIR/$i.tif -o $INPUT_DIR/tmp.RGB
-
 	# run ponomarenko's noise estimator with a single bin
-	$PONO -b 1 $INPUT_DIR/tmp.RGB | awk '{print $2}' >> $SIGMAS
+	$PONO -b 1 $INPUT_DIR/$i.tif | awk '{print $2}' >> $SIGMAS
 done | parallel
 
 # compute average sigma
 awk '{s+=$1} END {print s/NR}' RS=" " $SIGMAS > $OUTPUT
-rm -f $INPUT_DIR/tmp.RGB
 

@@ -26,7 +26,6 @@ fi
 
 
 PONO=src/1_preprocessing/ponomarenko/ponomarenko
-CONVICON=src/1_preprocessing/convicon/bin/convicon
 DOWNSA="src/utils/imscript/bin/downsa"
 
 # downsampling factor
@@ -42,18 +41,17 @@ do
 	then
 		# downsample to simulate the coarse-scale noise
 		$DOWNSA v $ZF $INPUT_DIR/$i.tif $INPUT_DIR/tmp.tif
+		# run ponomarenko's noise estimator with a single bin
+		$PONO -b 1 $INPUT_DIR/tmp.tif | awk '{print $2}' >> $SIGMAS
 	else
-		cp $INPUT_DIR/$i.tif $INPUT_DIR/tmp.tif
+		$PONO -b 1 $INPUT_DIR/$i.png | awk '{print $2}' >> $SIGMAS
 	fi
-
-	# convert from tif to RGB
-	$CONVICON -i $INPUT_DIR/tmp.tif -o $INPUT_DIR/tmp.RGB
-
-	# run ponomarenko's noise estimator with a single bin
-	$PONO -b 1 $INPUT_DIR/tmp.RGB | awk '{print $2}' >> $SIGMAS
 done | parallel
 
 # compute average sigma
 awk '{s+=$1} END {print s/NR}' RS=" " $SIGMAS > $OUTPUT
-rm -f $INPUT_DIR/tmp.RGB $INPUT_DIR/tmp.tif
+if [ $DOWNSAMPLE -eq 1 ];
+then
+	rm -f $INPUT_DIR/tmp.tif
+fi
 
