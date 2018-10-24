@@ -86,11 +86,11 @@ CImage::~CImage() {
 // Obtain format by extension of filename
 int CImage::get_file_type(char *filename) {
   const char *exts[] = {".RGB", ".PNG", ".LUM"};
+  const int num_exts = 3;
 
   int type = -1;
-  int i = 0;
-  char *ext = (char*)exts[0];
-  while (ext != NULL) {
+  for (int i = 0; i < num_exts; i++) {
+    char *ext = (char*)exts[i];
     int indexCmp = strlen(filename) - strlen(ext);
     if (indexCmp >= 0) {
       char *extFile = (char*)&filename[indexCmp];
@@ -99,13 +99,6 @@ int CImage::get_file_type(char *filename) {
   break;
       }
     }
-    i++;
-    ext = (char*)exts[i];
-  }
-  //
-  if (type == -1) {
-    PRINT_ERROR("Error: unknown file extension.\n");
-    exit(-1);
   }
   return type;
 }
