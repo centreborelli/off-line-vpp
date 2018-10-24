@@ -6,8 +6,19 @@ CSTRICT   = -Wall -Wextra -ansi
 CXXOPT    = -O99
 CXXFLAGS  = $(CXXOPT) -fopenmp
 CXXSTRICT = -Wall -Wextra -ansi
-LDFLAGS   = -lpng -lm -lfftw3f -lfftw3f_threads -lgomp
+LDFLAGS   = -lpng -ljpeg -ltiff -lm -lfftw3f -lfftw3f_threads -lgomp
 EXEC      = ponomarenko
+
+OBJ=./iio/iio.o\
+	 ./framework/CFramework.o\
+	 ./framework/libparser.o\
+	 ./framework/CHistogram.o\
+	 ./framework/CImage.o\
+	 ./framework/CInspector.o\
+	 ./framework/framework.o\
+	 ./framework/operations.o\
+	 ./curve_filter.o\
+	 ./algo.o
 
 default: $(EXEC)
 all: $(EXEC)
@@ -24,7 +35,7 @@ all: $(EXEC)
 	$(CXX) $(CXXFLAGS) -c ./framework/CHistogram.cpp -o ./framework/CHistogram.o
 
 ./framework/CImage.o: ./framework/CImage.cpp ./framework/CImage.h
-	$(CXX) $(CXXFLAGS) -c ./framework/CImage.cpp -o ./framework/CImage.o
+	$(CXX) $(CXXFLAGS) -Iiio -c ./framework/CImage.cpp -o ./framework/CImage.o
 
 ./framework/CInspector.o: ./framework/CInspector.cpp ./framework/CInspector.h
 	$(CXX) $(CXXFLAGS) -c ./framework/CInspector.cpp -o ./framework/CInspector.o
@@ -42,14 +53,14 @@ all: $(EXEC)
 	$(CXX) $(CXXFLAGS) -c ./algo.cpp -o ./algo.o
 
 # ------- Main -------
-$(EXEC):  ./framework/CFramework.o ./framework/libparser.o ./framework/CHistogram.o ./framework/CImage.o ./framework/CInspector.o ./framework/framework.o ./framework/operations.o ./curve_filter.o ./algo.o
-	$(CXX)  ./framework/CFramework.o ./framework/libparser.o ./framework/CHistogram.o ./framework/CImage.o ./framework/CInspector.o ./framework/framework.o ./framework/operations.o ./curve_filter.o ./algo.o $(LDFLAGS) -o $(EXEC)
+$(EXEC): $(OBJ)
+	$(CXX) $(OBJ) $(LDFLAGS) -o $(EXEC)
 
 lint:
 	$(MAKE) CFLAGS="$(CFLAGS) $(CSTRICT)" CXXFLAGS="$(CXXFLAGS) $(CXXSTRICT)"
 
 clean:
-	rm -f *.o
+	rm -f $(OBJ)
 
 distclean: clean
 	rm -f $(EXEC)

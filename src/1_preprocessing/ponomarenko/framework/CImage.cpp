@@ -27,6 +27,9 @@
 #include <sstream>
 #include <string.h>
 #include <png.h>
+extern "C" {
+#include "iio.h"
+}
 //
 #include "CImage.h"
 #include "CFramework.h"
@@ -119,8 +122,9 @@ void CImage::load(char *filename) {
       this->load_LUM(filename);
       break;
     default:
-      PRINT_ERROR("CImage: unknown file type: %s\n", filename);
-      exit(-1);
+      this->load_iio(filename);
+//    PRINT_ERROR("CImage: unknown file type: %s\n", filename);
+//    exit(-1);
   }
   PRINT_VERBOSE("Loaded image \"%s\", %dx%d, %d channels, %d bits in I_%d\n",
     filename, this->Nx, this->Ny,
@@ -257,6 +261,40 @@ void CImage::load_LUM(char *filename) {
   }
 
   fclose(infile);
+}
+
+void CImage::load_iio(char *filename) {
+  int num_channels;
+  size_t dummy;
+
+  int w, h, c;
+  float *image = iio_read_image_float_split(filename, &w, &h, &c);
+//w = 10; h = 10; c = 1;
+//float *image = (float *)malloc(100 * sizeof(float));
+
+  this->Nx = w;
+  this->Ny = h;
+  num_channels = c;
+
+  this->bits = 16; // ??
+  PRINT_VERBOSE("CImage load image (%dx%d), %d channels, in I_%d\n",
+    this->Nx, this->Ny, num_channels, this->id);
+
+  // Create data channels
+  create_channels(num_channels, Nx, Ny);
+
+  int idx_data = 0;
+  for (int ch = 0; ch < num_channels; ch++) {
+    float *m = this->get_channel(ch);
+    for (int y = 0; y < Ny; y++) {
+        for (int x = 0; x < Nx; x++) {
+          m[y*this->Nx+x] = image[idx_data];
+          idx_data++;
+        }
+    }
+  }
+
+  free(image);
 }
 
 static void *read_png_abort(FILE * fp,

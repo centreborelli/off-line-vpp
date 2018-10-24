@@ -49,6 +49,7 @@ class CImage {
     void load_float_RGB(char *filename);
     void load_LUM(char *filename);
     void load_PNG(char *filename);
+    void load_iio(char *filename);
     void save_PNG(char *filename, int bits_per_channel);
     void save_float_RGB(char *filename);
   public:
